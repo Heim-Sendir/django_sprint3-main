@@ -1,3 +1,60 @@
 from django.db import models
+from core.models import PublishedModel, TitleModel, CreatedAtModel
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+
+User = get_user_model()
+
+
+class Category(PublishedModel, TitleModel, CreatedAtModel):
+    description = models.TextField(verbose_name='Описание')
+    slug = models.SlugField(unique=True, verbose_name='Идентификатор')
+
+    class Meta:
+        verbose_name = 'категория'
+        verbose_name_plural = 'Категории'
+
+    def __str__(self):
+        return self.title
+
+
+class Location(PublishedModel, TitleModel):
+    name = models.CharField(max_length=256, verbose_name='Название места')
+
+    class Meta:
+        verbose_name = 'местоположение'
+        verbose_name_plural = 'Местоположения'
+
+    def __str__(self):
+        return self.name
+
+
+class Post(PublishedModel, TitleModel, CreatedAtModel):
+    text = models.TextField(verbose_name='Текст')
+    pub_date = models.DateTimeField.auto_now(verbose_name='Дата и'
+                                             ' время публикации')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор публикации'
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Категория'
+    )
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Местоположение'
+    )
+
+    class Meta:
+        verbose_name = 'публикация'
+        verbose_name_plural = 'Публикации'
+
+    def __str__(self):
+        return self.title
