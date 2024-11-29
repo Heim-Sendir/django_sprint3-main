@@ -8,7 +8,12 @@ User = get_user_model()
 
 class Category(PublishedModel, TitleModel, CreatedAtModel):
     description = models.TextField(verbose_name='Описание')
-    slug = models.SlugField(unique=True, verbose_name='Идентификатор')
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='Идентификатор',
+        help_text='Идентификатор страницы для URL; '
+        'разрешены символы латиницы, цифры, дефис и подчёркивание.'
+    )
 
     class Meta:
         verbose_name = 'категория'
@@ -18,7 +23,7 @@ class Category(PublishedModel, TitleModel, CreatedAtModel):
         return self.title
 
 
-class Location(PublishedModel, TitleModel):
+class Location(PublishedModel, TitleModel, CreatedAtModel):
     name = models.CharField(max_length=256, verbose_name='Название места')
 
     class Meta:
@@ -31,8 +36,11 @@ class Location(PublishedModel, TitleModel):
 
 class Post(PublishedModel, TitleModel, CreatedAtModel):
     text = models.TextField(verbose_name='Текст')
-    pub_date = models.DateTimeField.auto_now(verbose_name='Дата и'
-                                             ' время публикации')
+    pub_date = models.DateTimeField(auto_now_add=False,
+                                    verbose_name='Дата и время публикации',
+                                    help_text='Если установить дату и время в '
+                                    'будущем — можно делать '
+                                    'отложенные публикации.')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
