@@ -9,7 +9,7 @@ def index(request):
         is_published=True,
         category__is_published=True,
         pub_date__lte=timezone.now()
-    )
+    )[:5]
     context = {'post_list': posts}
     return render(request, template, context)
 
